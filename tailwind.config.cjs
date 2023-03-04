@@ -11,7 +11,7 @@ const config = {
         neutral: "#888888",
       },
       fontFamily: {
-        mono: ["mono", ...defaultTheme.fontFamily.sans],
+        mono: ["'Space Mono'", ...defaultTheme.fontFamily.sans],
       },
     },
   },
