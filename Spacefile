@@ -1,0 +1,8 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+app_name: Left
+micros:
+  - name: left
+    src: .
+    engine: next
+    primary: true
