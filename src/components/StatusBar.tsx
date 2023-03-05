@@ -14,28 +14,30 @@ const StatusBar = ({
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    const stabHandler = (e: {
+    const keyHandler = (e: {
       key: string;
-      metaKey: boolean;
+      keyCode: number;
       preventDefault(): unknown;
-      ctrlKey: boolean;
       shiftKey: boolean;
     }) => {
       if (type === "autocomplete" && e.key === "Tab") {
         e.preventDefault();
         replaceCurrentWord(autocomplete);
-      } else if (type === "synonyms" && e.key === "Tab") {
+        setCurrent(0);
+      } else if (e.key === "Tab") {
+        if (e.shiftKey) {
+          setCurrent(current + 1 < synonyms.length ? current + 1 : 0);
+        } else {
+          replaceCurrentWord(synonyms[current] || "");
+          setCurrent(0);
+        }
         e.preventDefault();
-        replaceCurrentWord(synonyms[current] || "");
-      }
-      if (e.key == "Tab" && e.shiftKey) {
-        e.preventDefault();
-        setCurrent(current + 1 < synonyms.length ? current + 1 : 0);
+        return;
       }
     };
 
-    window.addEventListener("keydown", stabHandler);
-    return () => window.removeEventListener("keydown", stabHandler);
+    window.addEventListener("keydown", keyHandler);
+    return () => window.removeEventListener("keydown", keyHandler);
   });
 
   const readChars = (read: number) => {
