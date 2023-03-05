@@ -8,6 +8,8 @@ const StatusBar = ({
   vocab,
   synonyms,
   read,
+  autocomplete,
+  replaceCurrentWord,
 }: Props) => {
   const [current, setCurrent] = useState(0);
 
@@ -19,6 +21,10 @@ const StatusBar = ({
       ctrlKey: boolean;
       shiftKey: boolean;
     }) => {
+      if (type === "autocomplete" && e.key === "Tab") {
+        e.preventDefault();
+        replaceCurrentWord(autocomplete);
+      }
       if (e.key == "Tab" && e.shiftKey) {
         e.preventDefault();
         setCurrent(current + 1 < synonyms.length ? current + 1 : 0);
@@ -59,7 +65,11 @@ const StatusBar = ({
           <div>{read}%</div>
         </div>
       ) : type === "stats" ? (
-        <div className="text-neutral">{lines}L {words}W {vocab}V {chars}C {read}%</div>
+        <div className="text-neutral">
+          {lines}L {words}W {vocab}V {chars}C {read}%
+        </div>
+      ) : type === "autocomplete" ? (
+        <div className={`text-neutral underline`}>{autocomplete}</div>
       ) : null}
     </div>
   );
@@ -73,6 +83,8 @@ interface Props {
   vocab: number;
   synonyms: string[];
   read: number;
+  autocomplete: string;
+  replaceCurrentWord: (string) => void;
 }
 
 export default StatusBar;
