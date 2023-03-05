@@ -70,8 +70,10 @@ const Home: NextPage = () => {
         moreWords.forEach((word) => {
           words.concat(word);
         });
-        const autocomplete = words.find((word) =>
-          word.startsWith(prose.substring(wordStart, wordEnd).toLowerCase())
+        const autocomplete = words.find(
+          (word) =>
+            !(prose.substring(wordStart, wordEnd).toLowerCase() === "") &&
+            word.startsWith(prose.substring(wordStart, wordEnd).toLowerCase())
         );
         if (autocomplete) {
           setAutocompleteWord(autocomplete);

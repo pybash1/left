@@ -24,6 +24,9 @@ const StatusBar = ({
       if (type === "autocomplete" && e.key === "Tab") {
         e.preventDefault();
         replaceCurrentWord(autocomplete);
+      } else if (type === "synonyms" && e.key === "Tab") {
+        e.preventDefault();
+        replaceCurrentWord(synonyms[current] || "");
       }
       if (e.key == "Tab" && e.shiftKey) {
         e.preventDefault();
@@ -84,7 +87,7 @@ interface Props {
   synonyms: string[];
   read: number;
   autocomplete: string;
-  replaceCurrentWord: (string) => void;
+  replaceCurrentWord: (newWord: string) => void;
 }
 
 export default StatusBar;
