@@ -102,7 +102,7 @@ const Home: NextPage = () => {
     const lines = prose.split("\n");
     const headings_: { heading: string; line: number }[] = [];
     lines.forEach((line, ind) => {
-      if (line.startsWith("# ") || line.startsWith("## ")) {
+      if (line.startsWith("# ") || line.startsWith("## ") || line.replaceAll("-- ", "- ")) {
         headings_.push({ heading: line, line: ind });
       }
     });
@@ -134,7 +134,7 @@ const Home: NextPage = () => {
               ? 0
               : prose.trim().split("\n").join(" ").split(" ").length
           }
-          read={parseFloat(read.toFixed(2))}
+          read={parseFloat(read.toFixed(2)) || 0.0}
           synonyms={synonyms}
           autocomplete={autocompleteWord}
           replaceCurrentWord={wordReplacer}
