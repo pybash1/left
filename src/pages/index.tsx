@@ -9,6 +9,7 @@ const Home: NextPage = () => {
     "synonyms"
   );
   const [prose, setProse] = useState("");
+  const [autocompleteWord, setAutocompleteWord] = useState("");
   const [line, setLine] = useState(0);
   const [read, setRead] = useState(0.0);
   const [synonyms, setSynonyms] = useState<string[]>([]);
@@ -17,6 +18,21 @@ const Home: NextPage = () => {
   );
 
   const writer = useRef<HTMLTextAreaElement>(null);
+
+  const wordReplacer = (newWord: string) => {
+    const pos = writer.current?.selectionStart;
+
+    let wordStart = pos || 0;
+    while (wordStart > 0 && /\S/.test(prose.charAt(wordStart - 1))) wordStart--;
+
+    let wordEnd = pos || 0;
+    while (wordEnd < prose.length && /\S/.test(prose.charAt(wordEnd)))
+      wordEnd++;
+
+    const before = writer.current?.value.substring(0, wordStart);
+    const after = writer.current?.value.substring(wordEnd);
+    setProse((before as string) + newWord + (after as string));
+  };
 
   useEffect(() => {
     const scrollHandler = () => {
@@ -39,11 +55,30 @@ const Home: NextPage = () => {
       while (wordEnd < prose.length && /\S/.test(prose.charAt(wordEnd)))
         wordEnd++;
 
-      if (Object.keys(SYN_DB).includes(prose.substring(wordStart, wordEnd))) {
+      if (
+        Object.keys(SYN_DB).includes(
+          prose.substring(wordStart, wordEnd).toLowerCase()
+        )
+      ) {
         setType("synonyms");
-        setSynonyms(SYN_DB[prose.substring(wordStart, wordEnd)] || []);
+        setSynonyms(
+          SYN_DB[prose.substring(wordStart, wordEnd).toLowerCase()] || []
+        );
       } else {
-        setType("stats");
+        const words = Object.keys(SYN_DB);
+        const moreWords = Object.values(SYN_DB);
+        moreWords.forEach((word) => {
+          words.concat(word);
+        });
+        const autocomplete = words.find((word) =>
+          word.startsWith(prose.substring(wordStart, wordEnd).toLowerCase())
+        );
+        if (autocomplete) {
+          setAutocompleteWord(autocomplete);
+          setType("autocomplete");
+        } else {
+          setType("stats");
+        }
       }
 
       const text = writer.current?.value.slice(0, pos);
@@ -99,6 +134,8 @@ const Home: NextPage = () => {
           }
           read={parseFloat(read.toFixed(2))}
           synonyms={synonyms}
+          autocomplete={autocompleteWord}
+          replaceCurrentWord={wordReplacer}
         />
       </div>
     </div>
