@@ -17,12 +17,13 @@ const Sidebar = ({ hidden = false, headings, line }: Props) => {
             <div>
               {heading.heading.startsWith("# ")
                 ? heading.heading.replace("# ", "")
-                : "- " + heading.heading.replace("## ", "")}
+                : heading.heading.startsWith("##")
+                ? heading.heading.replace("## ", "- ")
+                : heading.heading.replace("-- ", "- ")}
             </div>
             <div>{heading.line}</div>
           </li>
         ))}
-        
       </ul>
     </div>
   );
