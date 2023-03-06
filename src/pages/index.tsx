@@ -64,6 +64,42 @@ const Home: NextPage = () => {
     return new Date().toLocaleTimeString();
   };
 
+  const moveToPrevMarker = () => {
+    // todo
+  };
+
+  const moveToNextMarker = () => {
+    // todo
+  };
+
+  const speedRead = () => {
+    if (writer.current) writer.current.selectionStart = 0;
+    if (writer.current) writer.current.selectionEnd = 0;
+
+    const words = prose.split(" ");
+    let ind = 0;
+    let from = 0;
+
+    const highlight = () => {
+      if (ind > words.length) {
+        clearInterval(interval);
+        return;
+      }
+
+      const word = words[ind];
+      const wordStart = prose.indexOf(word as string, from);
+      const wordEnd = wordStart + (word?.length as number);
+
+      writer.current?.setSelectionRange(wordStart, wordEnd);
+      writer.current?.focus();
+
+      from = wordEnd;
+      ind++;
+    };
+
+    const interval = setInterval(highlight, 200);
+  };
+
   // scroll hand;er
   useEffect(() => {
     const scrollHandler = () => {
@@ -177,6 +213,13 @@ const Home: NextPage = () => {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === "\\") {
           setHidden(!hidden);
+        } else if (e.key === "[") {
+          moveToPrevMarker();
+        } else if (e.key === "]") {
+          moveToNextMarker();
+        } else if (e.key === "k") {
+          e.preventDefault();
+          speedRead();
         }
       }
     };
