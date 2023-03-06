@@ -49,7 +49,7 @@ const StatusBar = ({
   };
 
   return (
-    <div className="fixed bottom-0 flex h-8 w-full flex-row gap-4 text-sm">
+    <div className="fixed bottom-0 flex h-8 w-full flex-row gap-4 px-10 text-sm">
       {type === "synonyms" ? (
         synonyms.map((word, ind) => (
           <div
