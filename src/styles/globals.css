@@ -15,3 +15,8 @@ html {
 body {
   -ms-overflow-style: none;
 }
+
+::selection {
+  background-color: #ffffff;
+  color: #222222;
+}
