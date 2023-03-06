@@ -12,6 +12,7 @@ const Home: NextPage = () => {
   const [autocompleteWord, setAutocompleteWord] = useState("");
   const [line, setLine] = useState(0);
   const [read, setRead] = useState(0.0);
+  const [hidden, setHidden] = useState(false);
   const [prev, setPrev] = useState<
     "%" | "stats" | "synonyms" | "autocomplete" | "insert"
   >("stats");
@@ -165,6 +166,25 @@ const Home: NextPage = () => {
     setHeadings(headings_);
   }, [prose]);
 
+  // general shortcut handler
+  useEffect(() => {
+    const shortcutHandler = (e: {
+      key: string;
+      preventDefault(): unknown;
+      ctrlKey: boolean;
+      metaKey: boolean;
+    }) => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === "\\") {
+          setHidden(!hidden);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", shortcutHandler);
+    return () => window.removeEventListener("keydown", shortcutHandler);
+  });
+
   // insert mode shortcuts handler
   useEffect(() => {
     const shortcutHandler = (e: {
@@ -223,10 +243,10 @@ const Home: NextPage = () => {
 
   return (
     <div className="grid min-h-screen grid-cols-5 bg-base font-mono text-white">
-      <div className="w-full">
-        <Sidebar headings={headings} line={line} />
+      <div className={`w-full ${hidden ? "hidden" : ""}`}>
+        <Sidebar headings={headings} line={line} hidden={hidden} />
       </div>
-      <div className="col-span-4">
+      <div className={`${hidden ? "col-span-5" : "col-span-4"}`}>
         <textarea
           value={prose}
           onChange={(e) => setProse(e.target.value)}
