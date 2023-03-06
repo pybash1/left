@@ -1,4 +1,4 @@
-const Sidebar = ({ hidden = false, headings, line }: Props) => {
+const Sidebar = ({ hidden = false, headings, line, light }: Props) => {
   return (
     <div
       className={`${
@@ -10,7 +10,13 @@ const Sidebar = ({ hidden = false, headings, line }: Props) => {
         {headings.map((heading, ind) => (
           <li
             className={`flex cursor-pointer flex-row items-center justify-between gap-8 ${
-              heading.line === line ? "text-accent" : "text-neutral"
+              heading.line === line
+                ? light
+                  ? "text-accentl"
+                  : "text-accent"
+                : light
+                ? "text-neutrall"
+                : "text-neutral"
             }`}
             key={ind}
           >
@@ -33,6 +39,7 @@ interface Props {
   hidden?: boolean;
   headings: { heading: string; line: number }[];
   line: number;
+  light: boolean;
 }
 
 export default Sidebar;

@@ -10,6 +10,7 @@ const StatusBar = ({
   read,
   autocomplete,
   replaceCurrentWord,
+  light,
 }: Props) => {
   const [current, setCurrent] = useState(0);
 
@@ -53,16 +54,20 @@ const StatusBar = ({
       {type === "synonyms" ? (
         synonyms.map((word, ind) => (
           <div
-            className={`text-neutral ${current === ind ? "underline" : ""}`}
+            className={`{light ? "text-neutrall" : "text-neutral"} ${
+              current === ind ? "underline" : ""
+            }`}
             key={ind}
           >
             {word}
           </div>
         ))
       ) : type === "%" ? (
-        <div className="flex flex-row gap-2 text-neutral">
+        <div
+          className={`{light ? "text-neutrall" : "text-neutral"} flex flex-row gap-2`}
+        >
           <div className="flex">
-            <div className="text-accent">
+            <div className={`${light ? "text-accentl" : "text-accent"}`}>
               {readChars(Math.round((read / 100) * 10))}
             </div>
             <div>{readChars(10 - Math.round((read / 100) * 10))}</div>
@@ -70,26 +75,64 @@ const StatusBar = ({
           <div>{read}%</div>
         </div>
       ) : type === "stats" ? (
-        <div className="text-neutral">
+        <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
           {lines}L {words}W {vocab}V {chars}C {read}%
         </div>
       ) : type === "autocomplete" ? (
-        <div className={`text-neutral underline`}>{autocomplete}</div>
+        <div className={`{light ? "text-neutrall" : "text-neutral"} underline`}>
+          {autocomplete}
+        </div>
       ) : type === "insert" ? (
         <div className="flex flex-row gap-2">
           <div>Insert Mode</div>
-          <div className="text-neutral">c-d</div>
-          <div className="text-neutral underline">Date</div>
-          <div className="text-neutral">c-u</div>
-          <div className="text-neutral underline">Time</div>
-          <div className="text-neutral">c-p</div>
-          <div className="text-neutral underline">Path</div>
-          <div className="text-neutral">c-h/H</div>
-          <div className="text-neutral underline">Header</div>
-          <div className="text-neutral">c-/</div>
-          <div className="text-neutral underline">Comment</div>
-          <div className="text-neutral">Esc</div>
-          <div className="text-neutral underline">Exit</div>
+          <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
+            c-d
+          </div>
+          <div
+            className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+          >
+            Date
+          </div>
+          <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
+            c-u
+          </div>
+          <div
+            className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+          >
+            Time
+          </div>
+          <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
+            c-p
+          </div>
+          <div
+            className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+          >
+            Path
+          </div>
+          <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
+            c-h/H
+          </div>
+          <div
+            className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+          >
+            Header
+          </div>
+          <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
+            c-/
+          </div>
+          <div
+            className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+          >
+            Comment
+          </div>
+          <div className={`${light ? "text-neutrall" : "text-neutral"}`}>
+            Esc
+          </div>
+          <div
+            className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+          >
+            Exit
+          </div>
         </div>
       ) : null}
     </div>
@@ -106,6 +149,7 @@ interface Props {
   read: number;
   autocomplete: string;
   replaceCurrentWord: (newWord: string) => void;
+  light: boolean;
 }
 
 export default StatusBar;

@@ -14,6 +14,7 @@ const Home: NextPage = () => {
   const [line, setLine] = useState(0);
   const [read, setRead] = useState(0.0);
   const [hidden, setHidden] = useState(false);
+  const [light, setLight] = useState(false);
   const [prev, setPrev] = useState<
     "%" | "stats" | "synonyms" | "autocomplete" | "insert"
   >("stats");
@@ -312,6 +313,7 @@ const Home: NextPage = () => {
           .json()
           .then((data: { sidebar: boolean; light: boolean }) => {
             setHidden(data.sidebar);
+            setLight(data.light);
           })
           .catch((e) => console.log(e))
       )
@@ -319,16 +321,16 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <div className="grid min-h-screen grid-cols-5 bg-base font-mono text-white">
+    <div className={`grid min-h-screen grid-cols-5 ${light ? "bg-basel" : "bg-base"} font-mono ${light ? "text-black" : "text-white"}`}>
       <div className={`w-full ${hidden ? "hidden" : ""}`}>
-        <Sidebar headings={headings} line={line} hidden={hidden} />
+        <Sidebar headings={headings} line={line} hidden={hidden} light={light} />
       </div>
       <div className={`${hidden ? "col-span-5" : "col-span-4"}`}>
         <textarea
           value={prose}
           onChange={(e) => setProse(e.target.value)}
           onClick={() => setType("stats")}
-          className="h-[calc(100%-38px)] w-full resize-none bg-base py-10 px-10 text-sm outline-none"
+          className={`h-[calc(100%-38px)] w-full resize-none ${light ? "bg-basel" : "bg-base"} py-10 px-10 text-sm outline-none`}
           ref={writer}
         ></textarea>
         <StatusBar
@@ -347,6 +349,7 @@ const Home: NextPage = () => {
           synonyms={synonyms}
           autocomplete={autocompleteWord}
           replaceCurrentWord={wordReplacer}
+          light={light}
         />
       </div>
     </div>
