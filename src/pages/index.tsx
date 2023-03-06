@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import { useEffect, useState, useRef } from "react";
 import Sidebar from "~/components/Sidebar";
 import StatusBar from "~/components/StatusBar";
+import { env } from "~/env.mjs";
 import { SYN_DB } from "~/utils/synonyms";
 
 const Home: NextPage = () => {
@@ -213,6 +214,21 @@ const Home: NextPage = () => {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === "\\") {
           setHidden(!hidden);
+          fetch(
+            env.NEXT_PUBLIC_NODE_ENV === "dev"
+              ? "http://localhost:8000/sidebar"
+              : "/api/sidebar",
+            {
+              method: "POST",
+            }
+          )
+            .then((res) =>
+              res
+                .json()
+                .then((data) => console.log(data))
+                .catch((e) => console.log(e))
+            )
+            .catch((e) => console.log(e));
         } else if (e.key === "[") {
           moveToPrevMarker();
         } else if (e.key === "]") {
@@ -283,6 +299,24 @@ const Home: NextPage = () => {
     window.addEventListener("keydown", shortcutHandler);
     return () => window.removeEventListener("keydown", shortcutHandler);
   });
+
+  // sidebar config
+  useEffect(() => {
+    fetch(
+      env.NEXT_PUBLIC_NODE_ENV === "dev"
+        ? "http://localhost:8000/settings"
+        : "/api/settings"
+    )
+      .then((res) =>
+        res
+          .json()
+          .then((data: { sidebar: boolean; light: boolean }) => {
+            setHidden(data.sidebar);
+          })
+          .catch((e) => console.log(e))
+      )
+      .catch((e) => console.log(e));
+  }, []);
 
   return (
     <div className="grid min-h-screen grid-cols-5 bg-base font-mono text-white">
