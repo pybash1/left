@@ -75,13 +75,29 @@ const StatusBar = ({
         </div>
       ) : type === "autocomplete" ? (
         <div className={`text-neutral underline`}>{autocomplete}</div>
+      ) : type === "insert" ? (
+        <div className="flex flex-row gap-2">
+          <div>Insert Mode</div>
+          <div className="text-neutral">c-d</div>
+          <div className="text-neutral underline">Date</div>
+          <div className="text-neutral">c-u</div>
+          <div className="text-neutral underline">Time</div>
+          <div className="text-neutral">c-p</div>
+          <div className="text-neutral underline">Path</div>
+          <div className="text-neutral">c-h/H</div>
+          <div className="text-neutral underline">Header</div>
+          <div className="text-neutral">c-/</div>
+          <div className="text-neutral underline">Comment</div>
+          <div className="text-neutral">Esc</div>
+          <div className="text-neutral underline">Exit</div>
+        </div>
       ) : null}
     </div>
   );
 };
 
 interface Props {
-  type: "synonyms" | "%" | "stats" | "autocomplete";
+  type: "synonyms" | "%" | "stats" | "autocomplete" | "insert";
   lines: number;
   words: number;
   chars: number;
