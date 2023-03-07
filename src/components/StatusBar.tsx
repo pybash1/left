@@ -11,6 +11,7 @@ const StatusBar = ({
   autocomplete,
   replaceCurrentWord,
   light,
+  status,
 }: Props) => {
   const [current, setCurrent] = useState(0);
 
@@ -50,7 +51,7 @@ const StatusBar = ({
   };
 
   return (
-    <div className="fixed bottom-0 flex h-8 w-full flex-row gap-4 px-10 text-sm">
+    <div className="fixed bottom-0 flex h-8 w-full flex-row items-center gap-4 px-10 text-sm">
       {type === "synonyms" ? (
         synonyms.map((word, ind) => (
           <div
@@ -64,7 +65,9 @@ const StatusBar = ({
         ))
       ) : type === "%" ? (
         <div
-          className={`${light ? "text-neutrall" : "text-neutral"} flex flex-row gap-2`}
+          className={`${
+            light ? "text-neutrall" : "text-neutral"
+          } flex flex-row gap-2`}
         >
           <div className="flex">
             <div className={`${light ? "text-accentl" : "text-accent"}`}>
@@ -79,7 +82,9 @@ const StatusBar = ({
           {lines}L {words}W {vocab}V {chars}C {read}%
         </div>
       ) : type === "autocomplete" ? (
-        <div className={`${light ? "text-neutrall" : "text-neutral"} underline`}>
+        <div
+          className={`${light ? "text-neutrall" : "text-neutral"} underline`}
+        >
           {autocomplete}
         </div>
       ) : type === "insert" ? (
@@ -135,6 +140,9 @@ const StatusBar = ({
           </div>
         </div>
       ) : null}
+      <div className={`${light ? "text-neutrall" : "text-neutral"} pl-20`}>
+        {status}
+      </div>
     </div>
   );
 };
@@ -150,6 +158,7 @@ interface Props {
   autocomplete: string;
   replaceCurrentWord: (newWord: string) => void;
   light: boolean;
+  status: string;
 }
 
 export default StatusBar;
