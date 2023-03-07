@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from deta import Deta
 from dotenv import load_dotenv
@@ -63,3 +63,40 @@ def toggle_sidebar():
     except:
         current = True
     return get_settings_db().put({"sidebar": not current}, "settings")
+
+
+@app.get("/files")
+def get_all_files():
+    res = get_files_drive().list()
+    all_files = res.get("names")
+    paging = res.get("paging")
+    last = paging.get("last") if paging else None
+
+    while last:
+        res = get_files_drive().list(last=last)
+        all_files += res.get("names")
+        paging = res.get("paging")
+        last = paging.get("last") if paging else None
+
+    return {"files": all_files}
+
+
+@app.get("/file")
+def get_file(name: str):
+    file = get_files_drive().get(name)
+    content = file.read()
+    file.close()
+    return {"content": content}
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File("test")):
+    content = await file.read()
+    filename = file.filename.split(".")[:-1]
+    key = filename[0] if len(filename) == 0 else ".".join(filename)
+    if not key:
+        key = file.filename + ".txt"
+    else:
+        key += ".md"
+    get_files_drive().put(key, content)
+    return {"ok": True}
