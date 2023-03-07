@@ -10,6 +10,7 @@ const Home: NextPage = () => {
   const [type, setType] = useState<
     "%" | "stats" | "synonyms" | "autocomplete" | "insert"
   >("stats");
+  const [status, setStatus] = useState("");
   const [prose, setProse] = useState("");
   const [autocompleteWord, setAutocompleteWord] = useState("");
   const [line, setLine] = useState(0);
@@ -106,7 +107,27 @@ const Home: NextPage = () => {
     const interval = setInterval(highlight, 200);
   };
 
+  const refetchFiles = () => {
+    setStatus("refreshing files...");
+    fetch(
+      env.NEXT_PUBLIC_NODE_ENV === "dev"
+        ? "http://localhost:8000/files"
+        : "/api/files"
+    )
+      .then((res) =>
+        res
+          .json()
+          .then((data: { files: string[] }) => {
+            setFiles(data.files);
+            setStatus("refreshed files...");
+          })
+          .catch((e) => console.log(e))
+      )
+      .catch((e) => console.log(e));
+  };
+
   const handleUpload = (file: File | undefined) => {
+    setStatus("uploading...");
     const form = new FormData();
     form.append("file", file as File);
 
@@ -123,7 +144,32 @@ const Home: NextPage = () => {
         res
           .json()
           .then((data) => {
-            /*setRefetch(Math.random())*/
+            refetchFiles();
+          })
+          .catch((e) => console.log(e))
+      )
+      .catch((e) => console.log(e));
+  };
+
+  const upload = (content: string, name: string) => {
+    setStatus("uploading...");
+    const form = new FormData();
+    form.append("file", new Blob([content], { type: "text/plain" }), name);
+
+    fetch(
+      env.NEXT_PUBLIC_NODE_ENV === "dev"
+        ? "http://localhost:8000/upload"
+        : "/api/upload",
+      {
+        method: "POST",
+        body: form,
+      }
+    )
+      .then((res) =>
+        res
+          .json()
+          .then((data) => {
+            refetchFiles();
           })
           .catch((e) => console.log(e))
       )
@@ -268,6 +314,9 @@ const Home: NextPage = () => {
         } else if (e.key === "o") {
           e.preventDefault();
           fileInput.current?.click();
+        } else if (e.key === "s") {
+          e.preventDefault();
+          upload(prose, files[current] as string);
         }
       }
     };
@@ -353,6 +402,7 @@ const Home: NextPage = () => {
 
   // file loader
   useEffect(() => {
+    setStatus("refreshing files...");
     fetch(
       env.NEXT_PUBLIC_NODE_ENV === "dev"
         ? "http://localhost:8000/files"
@@ -363,6 +413,7 @@ const Home: NextPage = () => {
           .json()
           .then((data: { files: string[] }) => {
             setFiles(data.files);
+            setStatus("refreshing file...");
             if (data.files.length <= 0) {
               setProse(DEFAULT_PROSE);
             } else {
@@ -377,6 +428,7 @@ const Home: NextPage = () => {
                     .json()
                     .then((data: { content: string }) => {
                       setProse(data.content);
+                      setStatus("refreshed file...");
                     })
                     .catch((e) => console.log(e))
                 )
@@ -388,7 +440,9 @@ const Home: NextPage = () => {
       .catch((e) => console.log(e));
   }, []);
 
+  // get currently selected file
   useEffect(() => {
+    setStatus("refreshing file...");
     fetch(
       env.NEXT_PUBLIC_NODE_ENV === "dev"
         ? "http://localhost:8000/file?name=" + (files[current] as string)
@@ -399,6 +453,7 @@ const Home: NextPage = () => {
           .json()
           .then((data: { content: string }) => {
             setProse(data.content);
+            setStatus("refreshed file...");
           })
           .catch((e) => console.log(e))
       )
@@ -457,6 +512,7 @@ const Home: NextPage = () => {
           autocomplete={autocompleteWord}
           replaceCurrentWord={wordReplacer}
           light={light}
+          status={status}
         />
       </div>
     </div>
