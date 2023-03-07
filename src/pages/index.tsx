@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Sidebar from "~/components/Sidebar";
 import StatusBar from "~/components/StatusBar";
 import { env } from "~/env.mjs";
+import { DEFAULT_PROSE } from "~/utils/default";
 import { SYN_DB } from "~/utils/synonyms";
 
 const Home: NextPage = () => {
@@ -12,6 +13,7 @@ const Home: NextPage = () => {
   const [prose, setProse] = useState("");
   const [autocompleteWord, setAutocompleteWord] = useState("");
   const [line, setLine] = useState(0);
+  const [current, setCurrent] = useState(0);
   const [read, setRead] = useState(0.0);
   const [hidden, setHidden] = useState(false);
   const [light, setLight] = useState(false);
@@ -19,11 +21,13 @@ const Home: NextPage = () => {
     "%" | "stats" | "synonyms" | "autocomplete" | "insert"
   >("stats");
   const [synonyms, setSynonyms] = useState<string[]>([]);
+  const [files, setFiles] = useState<string[]>([]);
   const [headings, setHeadings] = useState<{ heading: string; line: number }[]>(
     []
   );
 
   const writer = useRef<HTMLTextAreaElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const wordReplacer = (newWord: string) => {
     const pos = writer.current?.selectionStart;
@@ -100,6 +104,30 @@ const Home: NextPage = () => {
     };
 
     const interval = setInterval(highlight, 200);
+  };
+
+  const handleUpload = (file: File | undefined) => {
+    const form = new FormData();
+    form.append("file", file as File);
+
+    fetch(
+      env.NEXT_PUBLIC_NODE_ENV === "dev"
+        ? "http://localhost:8000/upload"
+        : "/api/upload",
+      {
+        method: "POST",
+        body: form,
+      }
+    )
+      .then((res) =>
+        res
+          .json()
+          .then((data) => {
+            /*setRefetch(Math.random())*/
+          })
+          .catch((e) => console.log(e))
+      )
+      .catch((e) => console.log(e));
   };
 
   // scroll hand;er
@@ -237,6 +265,9 @@ const Home: NextPage = () => {
         } else if (e.key === "k") {
           e.preventDefault();
           speedRead();
+        } else if (e.key === "o") {
+          e.preventDefault();
+          fileInput.current?.click();
         }
       }
     };
@@ -301,7 +332,7 @@ const Home: NextPage = () => {
     return () => window.removeEventListener("keydown", shortcutHandler);
   });
 
-  // sidebar config
+  // sidebar and light mode config
   useEffect(() => {
     fetch(
       env.NEXT_PUBLIC_NODE_ENV === "dev"
@@ -320,17 +351,93 @@ const Home: NextPage = () => {
       .catch((e) => console.log(e));
   }, []);
 
+  // file loader
+  useEffect(() => {
+    fetch(
+      env.NEXT_PUBLIC_NODE_ENV === "dev"
+        ? "http://localhost:8000/files"
+        : "/api/files"
+    )
+      .then((res) =>
+        res
+          .json()
+          .then((data: { files: string[] }) => {
+            setFiles(data.files);
+            if (data.files.length <= 0) {
+              setProse(DEFAULT_PROSE);
+            } else {
+              fetch(
+                env.NEXT_PUBLIC_NODE_ENV === "dev"
+                  ? "http://localhost:8000/file?name=" +
+                      (data.files[0] as string)
+                  : "/api/file?name=" + (data.files[0] as string)
+              )
+                .then((res) =>
+                  res
+                    .json()
+                    .then((data: { content: string }) => {
+                      setProse(data.content);
+                    })
+                    .catch((e) => console.log(e))
+                )
+                .catch((e) => console.log(e));
+            }
+          })
+          .catch((e) => console.log(e))
+      )
+      .catch((e) => console.log(e));
+  }, []);
+
+  useEffect(() => {
+    fetch(
+      env.NEXT_PUBLIC_NODE_ENV === "dev"
+        ? "http://localhost:8000/file?name=" + (files[current] as string)
+        : "/api/file?name=" + (files[current] as string)
+    )
+      .then((res) =>
+        res
+          .json()
+          .then((data: { content: string }) => {
+            setProse(data.content);
+          })
+          .catch((e) => console.log(e))
+      )
+      .catch((e) => console.log(e));
+  }, [current]);
+
   return (
-    <div className={`grid min-h-screen grid-cols-5 ${light ? "bg-basel" : "bg-base"} font-mono ${light ? "text-black" : "text-white"}`}>
+    <div
+      className={`grid min-h-screen grid-cols-5 ${
+        light ? "bg-basel" : "bg-base"
+      } font-mono ${light ? "text-accentl" : "text-accent"}`}
+    >
+      <input
+        className="absolute top-0 left-0 hidden h-0 w-0"
+        type="file"
+        ref={fileInput}
+        onChange={(e) =>
+          handleUpload(e.target.files ? e.target.files[0] : undefined)
+        }
+      />
       <div className={`w-full ${hidden ? "hidden" : ""}`}>
-        <Sidebar headings={headings} line={line} hidden={hidden} light={light} />
+        <Sidebar
+          headings={headings}
+          line={line}
+          hidden={hidden}
+          light={light}
+          files={files}
+          current={current}
+          setCurrent={setCurrent}
+        />
       </div>
       <div className={`${hidden ? "col-span-5" : "col-span-4"}`}>
         <textarea
           value={prose}
           onChange={(e) => setProse(e.target.value)}
           onClick={() => setType("stats")}
-          className={`h-[calc(100%-38px)] w-full resize-none ${light ? "bg-basel" : "bg-base"} py-10 px-10 text-sm outline-none`}
+          className={`h-[calc(100%-38px)] w-full resize-none ${
+            light ? "bg-basel" : "bg-base"
+          } py-10 px-10 text-sm outline-none`}
           ref={writer}
         ></textarea>
         <StatusBar
