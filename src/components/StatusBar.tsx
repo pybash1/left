@@ -54,7 +54,7 @@ const StatusBar = ({
       {type === "synonyms" ? (
         synonyms.map((word, ind) => (
           <div
-            className={`{light ? "text-neutrall" : "text-neutral"} ${
+            className={`${light ? "text-neutrall" : "text-neutral"} ${
               current === ind ? "underline" : ""
             }`}
             key={ind}
@@ -64,7 +64,7 @@ const StatusBar = ({
         ))
       ) : type === "%" ? (
         <div
-          className={`{light ? "text-neutrall" : "text-neutral"} flex flex-row gap-2`}
+          className={`${light ? "text-neutrall" : "text-neutral"} flex flex-row gap-2`}
         >
           <div className="flex">
             <div className={`${light ? "text-accentl" : "text-accent"}`}>
@@ -79,7 +79,7 @@ const StatusBar = ({
           {lines}L {words}W {vocab}V {chars}C {read}%
         </div>
       ) : type === "autocomplete" ? (
-        <div className={`{light ? "text-neutrall" : "text-neutral"} underline`}>
+        <div className={`${light ? "text-neutrall" : "text-neutral"} underline`}>
           {autocomplete}
         </div>
       ) : type === "insert" ? (
