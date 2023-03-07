@@ -59,7 +59,7 @@ const Sidebar = ({
                 key={ind}
                 onClick={() => setCurrent(ind)}
               >
-                {file}
+                {file.replace(/(\.md|\.txt)$/g, "")}
               </li>
               {ind === current
                 ? headings.map((heading, ind) => (
