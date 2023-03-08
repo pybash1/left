@@ -109,11 +109,7 @@ const Home: NextPage = () => {
 
   const refetchFiles = () => {
     setStatus("refreshing files...");
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/files"
-        : "/api/files"
-    )
+    fetch("/api/files")
       .then((res) =>
         res
           .json()
@@ -131,15 +127,10 @@ const Home: NextPage = () => {
     const form = new FormData();
     form.append("file", file as File);
 
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/upload"
-        : "/api/upload",
-      {
-        method: "POST",
-        body: form,
-      }
-    )
+    fetch("/api/upload", {
+      method: "POST",
+      body: form,
+    })
       .then((res) =>
         res
           .json()
@@ -156,15 +147,10 @@ const Home: NextPage = () => {
     const form = new FormData();
     form.append("file", new Blob([content], { type: "text/plain" }), name);
 
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/upload"
-        : "/api/upload",
-      {
-        method: "POST",
-        body: form,
-      }
-    )
+    fetch("/api/upload", {
+      method: "POST",
+      body: form,
+    })
       .then((res) =>
         res
           .json()
@@ -289,14 +275,9 @@ const Home: NextPage = () => {
       if (e.ctrlKey || e.metaKey) {
         if (e.key === "\\") {
           setHidden(!hidden);
-          fetch(
-            env.NEXT_PUBLIC_NODE_ENV === "dev"
-              ? "http://localhost:8000/sidebar"
-              : "/api/sidebar",
-            {
-              method: "POST",
-            }
-          )
+          fetch("/api/sidebar", {
+            method: "POST",
+          })
             .then((res) =>
               res
                 .json()
@@ -383,11 +364,7 @@ const Home: NextPage = () => {
 
   // sidebar and light mode config
   useEffect(() => {
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/settings"
-        : "/api/settings"
-    )
+    fetch("/api/settings")
       .then((res) =>
         res
           .json()
@@ -403,11 +380,7 @@ const Home: NextPage = () => {
   // file loader
   useEffect(() => {
     setStatus("refreshing files...");
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/files"
-        : "/api/files"
-    )
+    fetch("/api/files")
       .then((res) =>
         res
           .json()
@@ -417,12 +390,7 @@ const Home: NextPage = () => {
             if (data.files.length <= 0) {
               setProse(DEFAULT_PROSE);
             } else {
-              fetch(
-                env.NEXT_PUBLIC_NODE_ENV === "dev"
-                  ? "http://localhost:8000/file?name=" +
-                      (data.files[0] as string)
-                  : "/api/file?name=" + (data.files[0] as string)
-              )
+              fetch("/api/file?name=" + (data.files[0] as string))
                 .then((res) =>
                   res
                     .json()
@@ -443,11 +411,7 @@ const Home: NextPage = () => {
   // get currently selected file
   useEffect(() => {
     setStatus("refreshing file...");
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/file?name=" + (files[current] as string)
-        : "/api/file?name=" + (files[current] as string)
-    )
+    fetch("/api/file?name=" + (files[current] as string))
       .then((res) =>
         res
           .json()

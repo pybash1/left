@@ -4,14 +4,9 @@ import { env } from "~/env.mjs";
 
 const Light: NextPage = () => {
   useEffect(() => {
-    fetch(
-      env.NEXT_PUBLIC_NODE_ENV === "dev"
-        ? "http://localhost:8000/light"
-        : "/api/light",
-      {
-        method: "POST",
-      }
-    )
+    fetch("/api/light", {
+      method: "POST",
+    })
       .then((res) =>
         res
           .json()
