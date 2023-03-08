@@ -297,6 +297,10 @@ const Home: NextPage = () => {
           fileInput.current?.click();
         } else if (e.key === "s") {
           e.preventDefault();
+          if (files.length <= 0) {
+            setStatus("guide cannot be saved...");
+            return;
+          }
           upload(prose, files[current] as string);
         }
       }
