@@ -7,7 +7,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <title>‎</title>
+        <title>Left</title>
       </Head>
       <Component {...pageProps} />
     </>
