@@ -7,3 +7,12 @@ micros:
     src: .
     engine: next
     primary: true
+  - name: backend
+    src: server
+    engine: python3.9
+    path: api
+    presets:
+      env:
+        - name: NEXT_PUBLIC_NODE_ENV
+          description: "node env"
+          default: "prod"
