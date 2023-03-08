@@ -11,6 +11,7 @@ Left is a simple, minimalist, open-source and cross-platform text editor.
 - Press <tab> to auto-complete a previously used, or common, word.
 - Press <shift tab> to scroll through the selected word's synonyms.
 - Press <c-\\> to toggle the navigation.
+- Press <c-s> to save the current file.
 
 -- Details
 
@@ -24,7 +25,7 @@ Left is a simple, minimalist, open-source and cross-platform text editor.
 You can quickly insert or transform text by activating the Insert Mode with <c-i>, followed by one of these shortcuts:
 
 - <c-d> : Date
-- <c-t> : Time
+- <c-u> : Time
 - <c-p> : Path
 - <c-h> : Header
 - <c-H> : Sub-Header
